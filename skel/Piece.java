@@ -86,10 +86,10 @@ public class Piece {
 	 */
 	private static List<TPoint> parsePoints(String rep) {
 		List<TPoint> points = new ArrayList<TPoint>();
-		StringTokenizer tok = new StringTokenizer(rep);
-		while(tok.hasMoreTokens()) {
-			int x = Integer.parseInt(tok.nextToken());
-			int y = Integer.parseInt(tok.nextToken());
+		StringTokenizer token = new StringTokenizer(rep);
+		while(token.hasMoreTokens()) {
+			int x = Integer.parseInt(token.nextToken());
+			int y = Integer.parseInt(token.nextToken());
 				
 			points.add(new TPoint(x, y));
 		}
