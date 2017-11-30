@@ -1,3 +1,5 @@
+package tetris;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -12,6 +14,9 @@ public class Board {
 	private int width;
 	private int height;
 
+	private int[] widths;
+	private int[] heights;
+
 	protected boolean[][] grid;
 	private boolean committed;
 	
@@ -24,8 +29,25 @@ public class Board {
 
 		this.grid = new boolean[width][height];
 		this.committed = true;
-		// YOUR CODE HERE
+
+		this.widths = new int[width];
+		this.heights = new int[height];
 	}
+
+    /**
+     * Creates a nex instance of borard from an instance by copying its attributes
+     * @param oldBoard board to copy
+     */
+	public Board(Board oldBoard){
+        this.width = oldBoard.width;
+        this.height = oldBoard.height;
+
+        this.grid = oldBoard.grid.clone();
+        this.committed = oldBoard.committed;
+
+        this.widths = oldBoard.widths.clone();
+        this.heights = oldBoard.heights.clone();
+    }
 	
 	public int getWidth() {
 		return this.width;
@@ -40,7 +62,13 @@ public class Board {
 	 * this is 0.
 	 */
 	public int getMaxHeight() {
-	    return 0; // YOUR CODE HERE
+        int max = 0;
+        for (int height : this.heights){
+            if (max < height){
+                max = height;
+            }
+        }
+        return height;
 	}
 
 	/**
@@ -60,14 +88,14 @@ public class Board {
 	 * block + 1. The height is 0 if the column contains no blocks.
 	 */
 	public int getColumnHeight(int x) {
-	    return 0; // YOUR CODE HERE
+	    return this.heights[x];
 	}
 
 	/**
 	 * Returns the number of filled blocks in the given row.
 	 */
 	public int getRowWidth(int y) {
-	    return 0; // YOUR CODE HERE
+	    return this.widths[y];
 	}
 
 	/**
@@ -75,7 +103,7 @@ public class Board {
 	 * the valid width/height area always return true.
 	 */
 	public boolean getGrid(int x, int y) {
-	    return false; // YOUR CODE HERE
+	    return this.grid[x][y];
 	}
 
 	public static final int PLACE_OK = 0;
@@ -99,12 +127,28 @@ public class Board {
 	 */
 	public int place(Piece piece, int x, int y) {
 	    if (!this.committed) {
-		throw new RuntimeException("can only place object if the board has been commited");
+		    throw new RuntimeException("can only place object if the board has been commited");
 	    }
 
-	    // YOUR CODE HERE
-	    
-	    return PLACE_OK;
+	    boolean rowFilled = false;
+
+        if (x + piece.getWidth() > this.width || y + piece.getHeight() > this.height){
+	        return PLACE_OUT_BOUNDS;
+        }
+
+        for (TPoint point : piece.getBody()){
+            boolean state = this.grid[x+point.x][y+point.y];
+            if (state){
+                return PLACE_BAD;
+            } else {
+                this.grid[x+point.x][y+point.y] = true;
+                this.widths[point.y]++;
+                if (this.widths[point.y] == this.width) rowFilled = true;
+                this.heights[point.x] = point.y; //QUESTION (CF SUJET)
+            }
+        }
+
+	    return (rowFilled) ? PLACE_ROW_FILLED : PLACE_OK;
 	}
 
 	/**
@@ -112,8 +156,32 @@ public class Board {
 	 * down. Returns the number of rows cleared.
 	 */
 	public int clearRows() {
-	    return 0; // YOUR CODE HERE
+	    int cleared = 0;
+
+        for (int i = 0; i < this.height; i++) {
+            if (this.widths[i] == this.width){
+                cleared++;
+                for (int j = 0; j < this.width; j++) {
+                    this.grid[i][j] = false;
+                }
+                dropFromRow(i);
+            }
+        }
+        return cleared;
 	}
+
+    /**
+     * Utility method
+     * Performs the dropdown feature from the cleared row
+     * @param y clear row
+     */
+	private void dropFromRow(int y){
+        for (int i = 0; i < this.width; i++) {
+            for (int j = y; j < this.height; j++) {
+                this.grid[i][j] = (j + 1 != this.height) && this.grid[i][j + 1];
+            }
+        }
+    }
 
 	/**
 	 * Reverts the board to its state before up to one place and one
@@ -123,7 +191,7 @@ public class Board {
 	 */
 	public void undo() {
 	    // YOUR CODE HERE
-	}
+    }
 
 	/**
 	 * Puts the board in the committed state.

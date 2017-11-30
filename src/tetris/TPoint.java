@@ -1,3 +1,5 @@
+package tetris;
+
 /*
  This is just a trivial "struct" type class --
  it simply holds an int x/y point for use by Tetris,
