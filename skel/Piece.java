@@ -1,6 +1,5 @@
-import java.util.List;
-
-import java.util.ArrayList;
+import java.util.*;
+import java.lang.reflect.Array;
 
 
 /**
@@ -41,7 +40,31 @@ public class Piece {
 	 * copy of the array and the TPoints inside it.
 	 */
 	public Piece(List<TPoint> points) {
-	    // YOUR CODE HERE
+		this.body=points;
+		
+	    this.width=0;
+	    for (int i=0; i<this.body.size(); i++) {
+	        if(this.body.get(i).x > this.width) {
+	        	this.width = this.body.get(i).x;
+	        }
+	    }
+	    this.width++;
+	    
+	    for (int i=0; i<this.body.size(); i++) {
+	        if(this.skirt.get(this.body.get(i).x) > this.body.get(i).y) {
+	        	this.skirt.get(this.body.get(i).x) = this.body.get(i).y;
+	        }else if(this.skirt.size()<this.width.size()) {
+	        	
+	        }
+	    }
+	   
+	    this.height=0;
+		for (int i=0; i<this.body.size(); i++) {
+		    if(this.body.get(i).y > this.height) {
+		    	this.height=this.body.get(i).y;
+		    }
+		}    
+		this.height++;
 	}
 	
 	/**
@@ -62,8 +85,15 @@ public class Piece {
 	 * TPoint[] array. (Provided code)
 	 */
 	private static List<TPoint> parsePoints(String rep) {
-	    // YOUR CODE HERE
-	    return null;
+		List<TPoint> points = new ArrayList<TPoint>();
+		StringTokenizer tok = new StringTokenizer(rep);
+		while(tok.hasMoreTokens()) {
+			int x = Integer.parseInt(tok.nextToken());
+			int y = Integer.parseInt(tok.nextToken());
+				
+			points.add(new TPoint(x, y));
+		}
+		return points;
 	}
 	
 	/**
@@ -103,8 +133,13 @@ public class Piece {
 	 * receiver.
 	 */
 	public Piece computeNextRotation() {
-	    // YOUR CODE HERE
-	    return null;
+		List<TPoint> newPoints;
+		TPoint temp;
+		for (int i=0; i<this.body.size(); i++) {
+			temp= TPoint(Math.abs(this.body.get(i).y - (this.height-1)), this.body.get(i).x);
+			newPoints.add(temp);
+		}
+	    return new Piece(newPoints);
 	}
 
 	/**
