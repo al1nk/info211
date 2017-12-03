@@ -71,11 +71,59 @@ public class Piece {
 	 * separated by spaces, such as "0 0 1 0 2 0 1 1". (provided)
 	 */
 	public Piece(String points) {
-		this(parsePoints(points));
+		this.body=parsePoints(points);
+		
+		this.width=0;
+	    for (int i=0; i<this.body.size(); i++) {
+	        if(this.body.get(i).x > this.width) {
+	        	this.width = this.body.get(i).x;
+	        }
+	    }
+	    this.width++;
+	    
+	    List<Integer> temp = new ArrayList<Integer>();;
+	    for (int i=0; i<this.body.size(); i++) {
+	    	if(temp.contains(this.body.get(i).x)==false) {
+	    		this.skirt.add(this.body.get(i).x, this.body.get(i).y);
+	    		temp.add(this.body.get(i).x);
+	    	}
+	    }
+	    
+	    this.height=0;
+		for (int i=0; i<this.body.size(); i++) {
+		    if(this.body.get(i).y > this.height) {
+		    	this.height=this.body.get(i).y;
+		    }
+		}
+		this.height++;
 	}
 
 	public Piece(Piece piece) {
-	    // YOUR CODE HERE
+		this.body=piece.getBody();
+		
+		this.width=0;
+	    for (int i=0; i<this.body.size(); i++) {
+	        if(this.body.get(i).x > this.width) {
+	        	this.width = this.body.get(i).x;
+	        }
+	    }
+	    this.width++;
+	    
+	    List<Integer> temp = new ArrayList<Integer>();;
+	    for (int i=0; i<this.body.size(); i++) {
+	    	if(temp.contains(this.body.get(i).x)==false) {
+	    		this.skirt.add(this.body.get(i).x, this.body.get(i).y);
+	    		temp.add(this.body.get(i).x);
+	    	}
+	    }
+	    
+	    this.height=0;
+		for (int i=0; i<this.body.size(); i++) {
+		    if(this.body.get(i).y > this.height) {
+		    	this.height=this.body.get(i).y;
+		    }
+		}
+		this.height++;
 	}
 
 
