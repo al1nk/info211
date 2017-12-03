@@ -49,7 +49,8 @@ public class Piece {
 	    }
 	    this.width++;
 	    
-	    List<Integer> temp = new ArrayList<Integer>();;
+	    List<Integer> temp = new ArrayList<Integer>();
+	    this.skirt = new ArrayList<Integer>();
 	    for (int i=0; i<this.body.size(); i++) {
 	    	if(temp.contains(this.body.get(i).x)==false) {
 	    		this.skirt.add(this.body.get(i).x, this.body.get(i).y);
@@ -81,7 +82,8 @@ public class Piece {
 	    }
 	    this.width++;
 	    
-	    List<Integer> temp = new ArrayList<Integer>();;
+	    List<Integer> temp = new ArrayList<Integer>();
+	    this.skirt = new ArrayList<Integer>();
 	    for (int i=0; i<this.body.size(); i++) {
 	    	if(temp.contains(this.body.get(i).x)==false) {
 	    		this.skirt.add(this.body.get(i).x, this.body.get(i).y);
@@ -109,7 +111,8 @@ public class Piece {
 	    }
 	    this.width++;
 	    
-	    List<Integer> temp = new ArrayList<Integer>();;
+	    List<Integer> temp = new ArrayList<Integer>();
+	    this.skirt = new ArrayList<Integer>();
 	    for (int i=0; i<this.body.size(); i++) {
 	    	if(temp.contains(this.body.get(i).x)==false) {
 	    		this.skirt.add(this.body.get(i).x, this.body.get(i).y);
