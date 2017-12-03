@@ -14,8 +14,8 @@ public class Board {
 	private int width;
 	private int height;
 
-	private int[] widths;
-	private int[] heights;
+	protected int[] widths;
+	protected int[] heights;
 
 	protected boolean[][] grid;
 	private boolean committed;
@@ -223,7 +223,7 @@ public class Board {
 		return buff.toString();
 	}
 
-	// Only for unit tests
+	// Only for unit tetris.tests
 	protected void updateWidthsHeights() {
 		Arrays.fill(this.widths, 0);
 

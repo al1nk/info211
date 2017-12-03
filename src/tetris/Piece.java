@@ -102,33 +102,19 @@ public class Piece {
 		this.height++;
 	}
 
+    /**
+     * Yet another constructor, instanciates a piece by cloning another piece
+     * @param piece piece to clone
+     */
 	public Piece(Piece piece) {
-		this.body=piece.getBody();
+
+		this.body = new ArrayList<>(piece.getBody());
 		
-		this.width=0;
-	    for (int i=0; i<this.body.size(); i++) {
-	        if(this.body.get(i).x > this.width) {
-	        	this.width = this.body.get(i).x;
-	        }
-	    }
-	    this.width++;
-	    
-	    List<Integer> temp = new ArrayList<Integer>();
-	    this.skirt = new ArrayList<Integer>();
-	    for (int i=0; i<this.body.size(); i++) {
-	    	if(temp.contains(this.body.get(i).x)==false) {
-	    		this.skirt.add(this.body.get(i).x, this.body.get(i).y);
-	    		temp.add(this.body.get(i).x);
-	    	}
-	    }
-	    
-	    this.height=0;
-		for (int i=0; i<this.body.size(); i++) {
-		    if(this.body.get(i).y > this.height) {
-		    	this.height=this.body.get(i).y;
-		    }
-		}
-		this.height++;
+        this.width = piece.width;
+        this.height = piece.height;
+
+        this.skirt = new ArrayList<>(piece.getSkirt());
+
 	}
 
 

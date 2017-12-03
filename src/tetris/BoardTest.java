@@ -1,8 +1,11 @@
-import static org.junit.Assert.*;
+package tetris;
+
+import org.junit.Test;
+import tetris.*;
 
 import java.util.Arrays;
 
-import org.junit.Test;
+import static org.junit.Assert.*;
 
 public class BoardTest {
 
