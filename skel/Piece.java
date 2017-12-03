@@ -1,5 +1,4 @@
 import java.util.*;
-import java.lang.reflect.Array;
 
 
 /**
@@ -50,21 +49,20 @@ public class Piece {
 	    }
 	    this.width++;
 	    
-	    
-	    List<Integer> temp = null;
+	    List<Integer> temp = new ArrayList<Integer>();;
 	    for (int i=0; i<this.body.size(); i++) {
 	    	if(temp.contains(this.body.get(i).x)==false) {
 	    		this.skirt.add(this.body.get(i).x, this.body.get(i).y);
 	    		temp.add(this.body.get(i).x);
 	    	}
 	    }
-	   
+	    
 	    this.height=0;
 		for (int i=0; i<this.body.size(); i++) {
 		    if(this.body.get(i).y > this.height) {
 		    	this.height=this.body.get(i).y;
 		    }
-		}    
+		}
 		this.height++;
 	}
 	
@@ -134,8 +132,8 @@ public class Piece {
 	 * receiver.
 	 */
 	public Piece computeNextRotation() {
-		List<TPoint> newPoints = null;
-		TPoint temp = null;
+		List<TPoint> newPoints = new ArrayList<TPoint>();
+		TPoint temp;
 		for (int i=0; i<this.body.size(); i++) {
 			temp= new TPoint(Math.abs(this.body.get(i).y - (this.height-1)), this.body.get(i).x);
 			newPoints.add(temp);
