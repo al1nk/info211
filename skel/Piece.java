@@ -50,12 +50,13 @@ public class Piece {
 	    }
 	    this.width++;
 	    
+	    
+	    List<Integer> temp = null;
 	    for (int i=0; i<this.body.size(); i++) {
-	        if(this.skirt.get(this.body.get(i).x) > this.body.get(i).y) {
-	        	this.skirt.get(this.body.get(i).x) = this.body.get(i).y;
-	        }else if(this.skirt.size()<this.width.size()) {
-	        	
-	        }
+	    	if(temp.contains(this.body.get(i).x)==false) {
+	    		this.skirt.add(this.body.get(i).x, this.body.get(i).y);
+	    		temp.add(this.body.get(i).x);
+	    	}
 	    }
 	   
 	    this.height=0;
@@ -133,10 +134,10 @@ public class Piece {
 	 * receiver.
 	 */
 	public Piece computeNextRotation() {
-		List<TPoint> newPoints;
-		TPoint temp;
+		List<TPoint> newPoints = null;
+		TPoint temp = null;
 		for (int i=0; i<this.body.size(); i++) {
-			temp= TPoint(Math.abs(this.body.get(i).y - (this.height-1)), this.body.get(i).x);
+			temp= new TPoint(Math.abs(this.body.get(i).y - (this.height-1)), this.body.get(i).x);
 			newPoints.add(temp);
 		}
 	    return new Piece(newPoints);
@@ -149,12 +150,45 @@ public class Piece {
 	 * Used internally to detect if two rotations are effectively the same.
 	 */
 	public boolean equals(Object obj) {
-	    return false;
-	    // YOUR CODE HERE
+		if (obj == this) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	public String toString() {
-	    // YOUR CODE HERE
+		String stringSkirt = "";
+		for(int i=0; i<this.skirt.size(); i++) {
+			 stringSkirt += Integer.toString(this.skirt.get(i)) + " ";
+		}
+		
+		String stringBody = "";
+		for(int i=0; i<this.body.size(); i++) {
+			 stringBody += Integer.toString(this.body.get(i).x) + " ";
+			 stringBody += Integer.toString(this.body.get(i).y) + " ";
+		}
+		
+		String image = "Shape {\n";
+	    image += "width=" + this.width + "; height=" + this.height + "; skirt=" + stringSkirt + "\n";
+	    image += "body=" + stringBody + "\n";
+	    char[][] grille = new char[this.height][this.width];
+	   
+	    for(int i=0; i<this.height; i++) {
+	    	Arrays.fill(grille[i], ' ');
+	    }
+	    
+	    for(int i=0; i<this.body.size(); i++) {
+	    	grille[Math.abs(this.body.get(i).y - this.height + 1)][this.body.get(i).x] = 'X';
+	    }
+	    
+	    String s = "";
+	    for(int i=0; i<this.height; i++) {
+	    	s += new String(grille[i]) + "\n";
+	    }
+	    
+	    image += s;
+	    return image;
 	}
 
 	/**
