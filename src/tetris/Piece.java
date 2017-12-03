@@ -1,8 +1,6 @@
 package tetris;
 
-import java.util.List;
-
-import java.util.ArrayList;
+import java.util.*;
 
 
 /**
@@ -43,7 +41,32 @@ public class Piece {
 	 * copy of the array and the TPoints inside it.
 	 */
 	public Piece(List<TPoint> points) {
-	    // YOUR CODE HERE
+		this.body=points;
+		
+	    this.width=0;
+	    for (int i=0; i<this.body.size(); i++) {
+	        if(this.body.get(i).x > this.width) {
+	        	this.width = this.body.get(i).x;
+	        }
+	    }
+	    this.width++;
+	    
+	    List<Integer> temp = new ArrayList<Integer>();
+	    this.skirt = new ArrayList<Integer>();
+	    for (int i=0; i<this.body.size(); i++) {
+	    	if(temp.contains(this.body.get(i).x)==false) {
+	    		this.skirt.add(this.body.get(i).x, this.body.get(i).y);
+	    		temp.add(this.body.get(i).x);
+	    	}
+	    }
+	    
+	    this.height=0;
+		for (int i=0; i<this.body.size(); i++) {
+		    if(this.body.get(i).y > this.height) {
+		    	this.height=this.body.get(i).y;
+		    }
+		}
+		this.height++;
 	}
 	
 	/**
@@ -51,11 +74,61 @@ public class Piece {
 	 * separated by spaces, such as "0 0 1 0 2 0 1 1". (provided)
 	 */
 	public Piece(String points) {
-		this(parsePoints(points));
+		this.body=parsePoints(points);
+		
+		this.width=0;
+	    for (int i=0; i<this.body.size(); i++) {
+	        if(this.body.get(i).x > this.width) {
+	        	this.width = this.body.get(i).x;
+	        }
+	    }
+	    this.width++;
+	    
+	    List<Integer> temp = new ArrayList<Integer>();
+	    this.skirt = new ArrayList<Integer>();
+	    for (int i=0; i<this.body.size(); i++) {
+	    	if(temp.contains(this.body.get(i).x)==false) {
+	    		this.skirt.add(this.body.get(i).x, this.body.get(i).y);
+	    		temp.add(this.body.get(i).x);
+	    	}
+	    }
+	    
+	    this.height=0;
+		for (int i=0; i<this.body.size(); i++) {
+		    if(this.body.get(i).y > this.height) {
+		    	this.height=this.body.get(i).y;
+		    }
+		}
+		this.height++;
 	}
 
 	public Piece(Piece piece) {
-	    // YOUR CODE HERE
+		this.body=piece.getBody();
+		
+		this.width=0;
+	    for (int i=0; i<this.body.size(); i++) {
+	        if(this.body.get(i).x > this.width) {
+	        	this.width = this.body.get(i).x;
+	        }
+	    }
+	    this.width++;
+	    
+	    List<Integer> temp = new ArrayList<Integer>();
+	    this.skirt = new ArrayList<Integer>();
+	    for (int i=0; i<this.body.size(); i++) {
+	    	if(temp.contains(this.body.get(i).x)==false) {
+	    		this.skirt.add(this.body.get(i).x, this.body.get(i).y);
+	    		temp.add(this.body.get(i).x);
+	    	}
+	    }
+	    
+	    this.height=0;
+		for (int i=0; i<this.body.size(); i++) {
+		    if(this.body.get(i).y > this.height) {
+		    	this.height=this.body.get(i).y;
+		    }
+		}
+		this.height++;
 	}
 
 
@@ -64,8 +137,15 @@ public class Piece {
 	 * TPoint[] array. (Provided code)
 	 */
 	private static List<TPoint> parsePoints(String rep) {
-	    // YOUR CODE HERE
-	    return null;
+		List<TPoint> points = new ArrayList<TPoint>();
+		StringTokenizer token = new StringTokenizer(rep);
+		while(token.hasMoreTokens()) {
+			int x = Integer.parseInt(token.nextToken());
+			int y = Integer.parseInt(token.nextToken());
+				
+			points.add(new TPoint(x, y));
+		}
+		return points;
 	}
 	
 	/**
@@ -105,8 +185,13 @@ public class Piece {
 	 * receiver.
 	 */
 	public Piece computeNextRotation() {
-	    // YOUR CODE HERE
-	    return null;
+		List<TPoint> newPoints = new ArrayList<TPoint>();
+		TPoint temp;
+		for (int i=0; i<this.body.size(); i++) {
+			temp= new TPoint(Math.abs(this.body.get(i).y - (this.height-1)), this.body.get(i).x);
+			newPoints.add(temp);
+		}
+	    return new Piece(newPoints);
 	}
 
 	/**
@@ -116,12 +201,45 @@ public class Piece {
 	 * Used internally to detect if two rotations are effectively the same.
 	 */
 	public boolean equals(Object obj) {
-	    return false;
-	    // YOUR CODE HERE
+		if (obj == this) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	public String toString() {
-	    // YOUR CODE HERE
+		String stringSkirt = "";
+		for(int i=0; i<this.skirt.size(); i++) {
+			 stringSkirt += Integer.toString(this.skirt.get(i)) + " ";
+		}
+		
+		String stringBody = "";
+		for(int i=0; i<this.body.size(); i++) {
+			 stringBody += Integer.toString(this.body.get(i).x) + " ";
+			 stringBody += Integer.toString(this.body.get(i).y) + " ";
+		}
+		
+		String image = "Shape {\n";
+	    image += "width=" + this.width + "; height=" + this.height + "; skirt=" + stringSkirt + "\n";
+	    image += "body=" + stringBody + "\n";
+	    char[][] grille = new char[this.height][this.width];
+	   
+	    for(int i=0; i<this.height; i++) {
+	    	Arrays.fill(grille[i], ' ');
+	    }
+	    
+	    for(int i=0; i<this.body.size(); i++) {
+	    	grille[Math.abs(this.body.get(i).y - this.height + 1)][this.body.get(i).x] = 'X';
+	    }
+	    
+	    String s = "";
+	    for(int i=0; i<this.height; i++) {
+	    	s += new String(grille[i]) + "\n";
+	    }
+	    
+	    image += s;
+	    return image;
 	}
 
 	/**
