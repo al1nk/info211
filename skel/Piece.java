@@ -43,7 +43,7 @@ public class Piece {
 		
 	    this.width=0;
 	    for (int i=0; i<this.body.size(); i++) {
-	        if(this.body.get(i).x > this.width) {
+	        if(this.body.get(i).x>this.width) {
 	        	this.width = this.body.get(i).x;
 	        }
 	    }
@@ -52,9 +52,12 @@ public class Piece {
 	    List<Integer> temp = new ArrayList<Integer>();
 	    this.skirt = new ArrayList<Integer>();
 	    for (int i=0; i<this.body.size(); i++) {
-	    	if(temp.contains(this.body.get(i).x)==false) {
+	    	if(!(temp.contains(this.body.get(i).x))) {
 	    		this.skirt.add(this.body.get(i).x, this.body.get(i).y);
 	    		temp.add(this.body.get(i).x);
+	    	} else if(this.skirt.get(temp.indexOf(this.body.get(i).x))>this.body.get(i).y){
+	    		this.skirt.remove(temp.indexOf(this.body.get(i).x));
+	    		this.skirt.add(this.body.get(i).x, this.body.get(i).y);
 	    	}
 	    }
 	    
@@ -85,9 +88,12 @@ public class Piece {
 	    List<Integer> temp = new ArrayList<Integer>();
 	    this.skirt = new ArrayList<Integer>();
 	    for (int i=0; i<this.body.size(); i++) {
-	    	if(temp.contains(this.body.get(i).x)==false) {
+	    	if(!(temp.contains(this.body.get(i).x))) {
 	    		this.skirt.add(this.body.get(i).x, this.body.get(i).y);
 	    		temp.add(this.body.get(i).x);
+	    	} else if(this.skirt.get(temp.indexOf(this.body.get(i).x))>this.body.get(i).y){
+	    		this.skirt.remove(temp.indexOf(this.body.get(i).x));
+	    		this.skirt.add(this.body.get(i).x, this.body.get(i).y);
 	    	}
 	    }
 	    
@@ -114,9 +120,12 @@ public class Piece {
 	    List<Integer> temp = new ArrayList<Integer>();
 	    this.skirt = new ArrayList<Integer>();
 	    for (int i=0; i<this.body.size(); i++) {
-	    	if(temp.contains(this.body.get(i).x)==false) {
+	    	if(!(temp.contains(this.body.get(i).x))) {
 	    		this.skirt.add(this.body.get(i).x, this.body.get(i).y);
 	    		temp.add(this.body.get(i).x);
+	    	} else if(this.skirt.get(temp.indexOf(this.body.get(i).x))>this.body.get(i).y){
+	    		this.skirt.remove(temp.indexOf(this.body.get(i).x));
+	    		this.skirt.add(this.body.get(i).x, this.body.get(i).y);
 	    	}
 	    }
 	    
@@ -182,16 +191,34 @@ public class Piece {
 	 * Returns a new piece that is 90 degrees counter-clockwise rotated from the
 	 * receiver.
 	 */
-	public Piece computeNextRotation() {
-		List<TPoint> newPoints = new ArrayList<TPoint>();
-		TPoint temp;
-		for (int i=0; i<this.body.size(); i++) {
-			temp= new TPoint(Math.abs(this.body.get(i).y - (this.height-1)), this.body.get(i).x);
-			newPoints.add(temp);
-		}
-	    return new Piece(newPoints);
-	}
 
+	public Piece computeNextRotation() {
+		boolean alignement = false;
+		List<TPoint> points = new ArrayList<TPoint>();
+		while(alignement) {
+			int aligneur = 0;
+			points = new ArrayList<TPoint>();
+			TPoint temp;
+			int x;
+			int y;
+			for (int i=0; i<this.body.size(); i++) {
+			//swap x y
+			x = this.body.get(i).y;
+			y = this.body.get(i).x;
+			//symétrie axe vertical
+			x = Math.abs(x - (this.width-1)) - aligneur;
+			if(x==0) {
+				alignement = true;
+			}
+			temp= new TPoint(x,y);
+			points.add(temp);
+			}
+			aligneur++;
+		}
+		
+		return new Piece(points);
+	}
+	
 	/**
 	 * Returns true if two pieces are the same -- their bodies contain the same
 	 * points. Interestingly, this is not the same as having exactly the same
@@ -199,11 +226,13 @@ public class Piece {
 	 * Used internally to detect if two rotations are effectively the same.
 	 */
 	public boolean equals(Object obj) {
-		if (obj == this) {
-			return true;
-		} else {
-			return false;
-		}
+		if (!(obj instanceof Piece)) return false;
+		Piece other = (Piece)obj;
+		
+		List<TPoint> myBody = this.body;
+		List<TPoint> otherBody = other.getBody();
+		
+		return myBody.containsAll(otherBody);
 	}
 
 	public String toString() {
