@@ -23,26 +23,21 @@ public class JBrainTetris extends JTetris {
     
     public JComponent createControlPanel() {
         JComponent panel = super.createControlPanel();
-        
         panel.add(new JLabel("Brain:"));
-        
         brainMode = new JCheckBox("Actif");
         animation = new JCheckBox("Animation");
         animation.setSelected(true);
         animation.setEnabled(false);
         panel.add(brainMode);
         panel.add(animation);
-        
         pan = new JPanel();
         pan.add(new JLabel("Adversaire : "));
         adversaire = new JSlider(0, 100, 0);
         adversaire.setPreferredSize(new Dimension(100, 15));
         pan.add(adversaire);
         panel.add(pan);
-        
         randomizedI = new JLabel("");
         panel.add(randomizedI);
-        
         brainMode.addChangeListener(new ChangeListener() {
            public void stateChanged(ChangeEvent e) {
         	   if(brainMode.isSelected()) {
@@ -92,11 +87,11 @@ public class JBrainTetris extends JTetris {
     
     public Piece pickNextPiece() {
         if(random.nextInt(100) >= adversaire.getValue()) {
-            randomizedI.setText("ok");
+            randomizedI.setText("done");
             return super.pickNextPiece();
         }
         
-        randomizedI.setText("*ok*");
+        randomizedI.setText("*done*");
         return pickWorstPiece();
     }
 
@@ -107,9 +102,9 @@ public class JBrainTetris extends JTetris {
            if(piece.equals(worst.piece)) {
         	   continue;
            }
-           Brain.Move working = brain.bestMove(board, piece, HEIGHT);
-           if(working.score > worst.score) {
-        	   worst = working;
+           Brain.Move bigger = brain.bestMove(board, piece, HEIGHT);
+           if(bigger.score > worst.score) {
+        	   worst = bigger;
            }
        }
        return worst.piece;
