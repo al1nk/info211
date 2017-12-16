@@ -107,35 +107,13 @@ public class Piece {
 	}
 
 	public Piece(Piece piece) {
-		this.body=piece.getBody();
+		this.body = new ArrayList<>(piece.getBody());
 		
-		this.width=0;
-	    for (int i=0; i<this.body.size(); i++) {
-	        if(this.body.get(i).x > this.width) {
-	        	this.width = this.body.get(i).x;
-	        }
-	    }
-	    this.width++;
-	    
-	    List<Integer> temp = new ArrayList<Integer>();
-	    this.skirt = new ArrayList<Integer>();
-	    for (int i=0; i<this.body.size(); i++) {
-	    	if(!(temp.contains(this.body.get(i).x))) {
-	    		this.skirt.add(this.body.get(i).x, this.body.get(i).y);
-	    		temp.add(this.body.get(i).x);
-	    	} else if(this.skirt.get(temp.indexOf(this.body.get(i).x))>this.body.get(i).y){
-	    		this.skirt.remove(temp.indexOf(this.body.get(i).x));
-	    		this.skirt.add(this.body.get(i).x, this.body.get(i).y);
-	    	}
-	    }
-	    
-	    this.height=0;
-		for (int i=0; i<this.body.size(); i++) {
-		    if(this.body.get(i).y > this.height) {
-		    	this.height=this.body.get(i).y;
-		    }
-		}
-		this.height++;
+		this.width = piece.getWidth();
+		
+		this.height = piece.getHeight();
+		
+		this.skirt = new ArrayList<>(piece.getSkirt());
 	}
 
 
@@ -143,7 +121,8 @@ public class Piece {
 	 * Given a string of x,y pairs ("0 0 0 1 0 2 1 0"), parses the points into a
 	 * TPoint[] array. (Provided code)
 	 */
-	private static List<TPoint> parsePoints(String rep) {
+	
+/**	private static List<TPoint> parsePoints(String rep) {
 		List<TPoint> points = new ArrayList<TPoint>();
 		StringTokenizer token = new StringTokenizer(rep);
 		while(token.hasMoreTokens()) {
@@ -153,7 +132,24 @@ public class Piece {
 			points.add(new TPoint(x, y));
 		}
 		return points;
+	} **/
+	
+	private static List<TPoint> parsePoints(String rep) {
+		List<TPoint> points = new ArrayList<TPoint>();
+		String[] s = rep.split(" ");
+		try {
+		for (int i=0; i<s.length; i=i+2) {
+			int x = Integer.parseInt(s[i]);
+			int y = Integer.parseInt(s[i+1]);
+			points.add(new TPoint(x,y));
+		}
+		}
+		catch (NumberFormatException e) {
+			throw new RuntimeException("Could not parse x,y");
+		}
+		return points;
 	}
+	
 	
 	/**
 	 * Returns the width of the piece measured in blocks.
@@ -192,31 +188,60 @@ public class Piece {
 	 * receiver.
 	 */
 
-	public Piece computeNextRotation() {
-		boolean alignement = false;
+/**	public Piece computeNextRotation() {
+		boolean nonalignement = true;
+		int aligneurx = 0;
+		int aligneury = 0;
+		boolean alignementx = false;
+		boolean alignementy = false;
 		List<TPoint> points = new ArrayList<TPoint>();
-		while(alignement) {
-			int aligneur = 0;
+		do {
 			points = new ArrayList<TPoint>();
 			TPoint temp;
 			int x;
 			int y;
 			for (int i=0; i<this.body.size(); i++) {
-			//swap x y
-			x = this.body.get(i).y;
-			y = this.body.get(i).x;
-			//symétrie axe vertical
-			x = Math.abs(x - (this.width-1)) - aligneur;
-			if(x==0) {
-				alignement = true;
-			}
-			temp= new TPoint(x,y);
-			points.add(temp);
-			}
-			aligneur++;
-		}
+				//swap x y
+				x = this.body.get(i).y;
+				y = this.body.get(i).x;
+				//symétrie axe vertical
+				x = Math.abs(Math.abs(x - (this.width-1)) - aligneurx);
+				y = Math.abs(Math.abs(y - (this.height-1)) - aligneury);
+				temp= new TPoint(x,y);
+				points.add(temp);
+				if(x==0) {
+					alignementx=true;
+				}
+				if(y==0) {
+					alignementy=true;
+				}
+				if(alignementx && alignementy) {
+					nonalignement=false;
+				}
+			} 
+				aligneurx++;
+				aligneury++;
+		} while (nonalignement);
 		
 		return new Piece(points);
+	} */
+	
+	public Piece computeNextRotation() {
+		TPoint[] nPoints = new TPoint[this.body.size()];
+		int temp=0;
+		this.body.toArray(nPoints);
+		for (int i=0; i<nPoints.length; i++) {
+			temp=nPoints[i].x;
+			nPoints[i].x=nPoints[i].y;
+			nPoints[i].y=temp;
+		}
+		for (int i=0; i<nPoints.length; i++) {
+			nPoints[i].x=Math.abs(nPoints[i].x - (this.height-1));
+		}
+		String s= Arrays.toString(nPoints).replaceAll("\\[|\\]|,|\\)|\\(|\\s", " ");
+		s = s.trim().replaceAll(" +", " ");
+		System.out.println(s);
+		return new Piece(s);
 	}
 	
 	/**
@@ -226,7 +251,9 @@ public class Piece {
 	 * Used internally to detect if two rotations are effectively the same.
 	 */
 	public boolean equals(Object obj) {
-		if (!(obj instanceof Piece)) return false;
+		if (!(obj instanceof Piece)) {
+			return false;
+		}
 		Piece other = (Piece)obj;
 		
 		List<TPoint> myBody = this.body;
