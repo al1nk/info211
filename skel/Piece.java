@@ -49,6 +49,14 @@ public class Piece {
 	    }
 	    this.width++;
 	    
+	    this.height=0;
+		for (int i=0; i<this.body.size(); i++) {
+		    if(this.body.get(i).y > this.height) {
+		    	this.height=this.body.get(i).y;
+		    }
+		}
+		this.height++;
+		
 	    List<Integer> temp = new ArrayList<Integer>();
 	    this.skirt = new ArrayList<Integer>();
 	    for (int i=0; i<this.body.size(); i++) {
@@ -60,14 +68,6 @@ public class Piece {
 	    		this.skirt.add(this.body.get(i).x, this.body.get(i).y);
 	    	}
 	    }
-	    
-	    this.height=0;
-		for (int i=0; i<this.body.size(); i++) {
-		    if(this.body.get(i).y > this.height) {
-		    	this.height=this.body.get(i).y;
-		    }
-		}
-		this.height++;
 	}
 	
 	/**
@@ -85,6 +85,14 @@ public class Piece {
 	    }
 	    this.width++;
 	    
+	    this.height=0;
+		for (int i=0; i<this.body.size(); i++) {
+		    if(this.body.get(i).y > this.height) {
+		    	this.height=this.body.get(i).y;
+		    }
+		}
+		this.height++;
+		
 	    List<Integer> temp = new ArrayList<Integer>();
 	    this.skirt = new ArrayList<Integer>();
 	    for (int i=0; i<this.body.size(); i++) {
@@ -96,14 +104,6 @@ public class Piece {
 	    		this.skirt.add(this.body.get(i).x, this.body.get(i).y);
 	    	}
 	    }
-	    
-	    this.height=0;
-		for (int i=0; i<this.body.size(); i++) {
-		    if(this.body.get(i).y > this.height) {
-		    	this.height=this.body.get(i).y;
-		    }
-		}
-		this.height++;
 	}
 
 	public Piece(Piece piece) {
@@ -121,18 +121,6 @@ public class Piece {
 	 * Given a string of x,y pairs ("0 0 0 1 0 2 1 0"), parses the points into a
 	 * TPoint[] array. (Provided code)
 	 */
-	
-/**	private static List<TPoint> parsePoints(String rep) {
-		List<TPoint> points = new ArrayList<TPoint>();
-		StringTokenizer token = new StringTokenizer(rep);
-		while(token.hasMoreTokens()) {
-			int x = Integer.parseInt(token.nextToken());
-			int y = Integer.parseInt(token.nextToken());
-				
-			points.add(new TPoint(x, y));
-		}
-		return points;
-	} **/
 	
 	private static List<TPoint> parsePoints(String rep) {
 		List<TPoint> points = new ArrayList<TPoint>();
@@ -187,48 +175,11 @@ public class Piece {
 	 * Returns a new piece that is 90 degrees counter-clockwise rotated from the
 	 * receiver.
 	 */
-
-/**	public Piece computeNextRotation() {
-		boolean nonalignement = true;
-		int aligneurx = 0;
-		int aligneury = 0;
-		boolean alignementx = false;
-		boolean alignementy = false;
-		List<TPoint> points = new ArrayList<TPoint>();
-		do {
-			points = new ArrayList<TPoint>();
-			TPoint temp;
-			int x;
-			int y;
-			for (int i=0; i<this.body.size(); i++) {
-				//swap x y
-				x = this.body.get(i).y;
-				y = this.body.get(i).x;
-				//symétrie axe vertical
-				x = Math.abs(Math.abs(x - (this.width-1)) - aligneurx);
-				y = Math.abs(Math.abs(y - (this.height-1)) - aligneury);
-				temp= new TPoint(x,y);
-				points.add(temp);
-				if(x==0) {
-					alignementx=true;
-				}
-				if(y==0) {
-					alignementy=true;
-				}
-				if(alignementx && alignementy) {
-					nonalignement=false;
-				}
-			} 
-				aligneurx++;
-				aligneury++;
-		} while (nonalignement);
-		
-		return new Piece(points);
-	} */
 	
 	public Piece computeNextRotation() {
 		TPoint[] nPoints = new TPoint[this.body.size()];
 		int temp=0;
+		ArrayList<TPoint> mPoints = new ArrayList<>();
 		this.body.toArray(nPoints);
 		for (int i=0; i<nPoints.length; i++) {
 			temp=nPoints[i].x;
@@ -238,10 +189,36 @@ public class Piece {
 		for (int i=0; i<nPoints.length; i++) {
 			nPoints[i].x=Math.abs(nPoints[i].x - (this.height-1));
 		}
-		String s= Arrays.toString(nPoints).replaceAll("\\[|\\]|,|\\)|\\(|\\s", " ");
-		s = s.trim().replaceAll(" +", " ");
-		System.out.println(s);
-		return new Piece(s);
+		
+		for (int i=0; i<nPoints.length; i++) {
+			if (nPoints[i].x==0) {
+				int x = nPoints[i].x;
+				int y = nPoints[i].y;
+				mPoints.add(new TPoint(x,y));
+			}
+		}
+		for (int i=0; i<nPoints.length; i++) {
+			if (nPoints[i].x==1) {
+				int x = nPoints[i].x;
+				int y = nPoints[i].y;
+				mPoints.add(new TPoint(x,y));
+			}
+		}
+		for (int i=0; i<nPoints.length; i++) {
+			if (nPoints[i].x==2) {
+				int x = nPoints[i].x;
+				int y = nPoints[i].y;
+				mPoints.add(new TPoint(x,y));
+			}
+		}
+		for (int i=0; i<nPoints.length; i++) {
+			if (nPoints[i].x==3) {
+				int x = nPoints[i].x;
+				int y = nPoints[i].y;
+				mPoints.add(new TPoint(x,y));
+			}
+		}
+		return new Piece(mPoints);
 	}
 	
 	/**
