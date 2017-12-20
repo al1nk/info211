@@ -12,6 +12,8 @@ import javax.swing.event.*;
 
 import java.awt.Toolkit;
 
+import static javax.swing.WindowConstants.*;
+
 /**
  * JTetris presents a tetris game in a window. It handles the
  * GUI and the animation. The Piece and Board classes handle the lower-level
@@ -50,7 +52,7 @@ public class JTetris extends JComponent {
 
 	// Is drawing optimized
 	// (default false, so debugging is easier)
-	protected boolean DRAW_OPTIMIZE = false;
+	protected boolean DRAW_OPTIMIZE = true;
 
 	// Board data structures
 	protected Board board;
@@ -393,7 +395,8 @@ public class JTetris extends JComponent {
 		// Sets the newXXX ivars
 		this.computeNewPosition(verb);
 
-		// try out the new position (rolls back if it doesn't work)
+
+        // try out the new position (rolls back if it doesn't work)
 		int result = setCurrent(newPiece, newX, newY);
 
 		// if row clearing is going to happen, draw the
@@ -550,6 +553,8 @@ public class JTetris extends JComponent {
 					continue;
 			}
 
+			System.out.print(board);
+
 			// draw from 0 up to the col height
 			final int yHeight = board.getColumnHeight(x);
 			for (y = 0; y < yHeight; y++) {
@@ -670,7 +675,7 @@ public class JTetris extends JComponent {
 			}
 		});
 
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		frame.pack();
 
 		return frame;
