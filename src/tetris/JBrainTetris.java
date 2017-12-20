@@ -1,3 +1,5 @@
+package tetris;
+
 import java.awt.*;
 import javax.swing.*;
 import java.util.*;
@@ -38,20 +40,19 @@ public class JBrainTetris extends JTetris {
         panel.add(pan);
         randomizedI = new JLabel("");
         panel.add(randomizedI);
-        brainMode.addChangeListener(new ChangeListener() {
-           public void stateChanged(ChangeEvent e) {
-        	   if(brainMode.isSelected()) {
-            	   animation.setEnabled(true);
-               } else {
-            	   animation.setEnabled(false);
-               }
-           }
+
+        brainMode.addChangeListener(e -> {
+            if(brainMode.isSelected()) {
+                animation.setEnabled(true);
+            } else {
+                animation.setEnabled(false);
+            }
         });
         
         return panel;
     }
     
-    JBrainTetris(int pixels) {
+    public JBrainTetris(int pixels) {
         super(pixels);
         brain = new DefaultBrain();
         bestMove = null;

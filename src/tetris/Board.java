@@ -1,7 +1,7 @@
 package tetris;
 
 import java.util.Arrays;
-import java.util.List;
+import java.util.Stack;
 
 /**
  * Represents a Tetris board -- essentially a 2-d grid of booleans. Supports
@@ -19,6 +19,10 @@ public class Board {
 
 	protected boolean[][] grid;
 	private boolean committed;
+
+	private boolean[][] backupGrid;
+	private int[] backupWidths;
+	private int[] backupHeights;
 	
 	/**
 	 * Creates an empty board of the given width and height measured in blocks.
@@ -30,9 +34,14 @@ public class Board {
 		this.grid = new boolean[width][height];
 		this.committed = true;
 
-		this.widths = new int[width];
-		this.heights = new int[height];
-	}
+		this.widths = new int[height];
+		this.heights = new int[width];
+
+        this.backupGrid = new boolean[width][height];
+        this.backupWidths = new int[height];
+        this.backupHeights = new int[width];
+
+    }
 
     /**
      * Creates a nex instance of borard from an instance by copying its attributes
@@ -42,11 +51,14 @@ public class Board {
         this.width = oldBoard.width;
         this.height = oldBoard.height;
 
-        this.grid = oldBoard.grid.clone();
+        //Here, we use Java 8's streams to 'deepcopy' the 2D grid array
+        this.grid = Arrays.stream(oldBoard.grid).map(boolean[]::clone).toArray(boolean[][]::new);
+
         this.committed = oldBoard.committed;
 
-        this.widths = oldBoard.widths.clone();
-        this.heights = oldBoard.heights.clone();
+        //Using Arrays' copyOf method to copy widths and heights
+        this.widths = Arrays.copyOf(oldBoard.widths, oldBoard.height);
+        this.heights = Arrays.copyOf(oldBoard.heights, oldBoard.width);
     }
 	
 	public int getWidth() {
@@ -62,13 +74,15 @@ public class Board {
 	 * this is 0.
 	 */
 	public int getMaxHeight() {
+
         int max = 0;
+
         for (int height : this.heights){
             if (max < height){
                 max = height;
             }
         }
-        return height;
+        return max;
 	}
 
 	/**
@@ -80,7 +94,16 @@ public class Board {
 	 * O(skirt length).
 	 */
 	public int dropHeight(Piece piece, int x) {
-	    return 0; // YOUR CODE HERE
+
+	    int y = 0;
+
+        for (int i = 0; i < piece.getSkirt().size(); i++) {
+            int delta = this.heights[i] - piece.getSkirt().get(i);
+            if (delta > y){
+                y = delta;
+            }
+        }
+	    return y;
 	}
 
 	/**
@@ -126,25 +149,39 @@ public class Board {
 	 * pre-place state.
 	 */
 	public int place(Piece piece, int x, int y) {
+	    //Managing the committed state
 	    if (!this.committed) {
-		    throw new RuntimeException("can only place object if the board has been commited");
+		    throw new RuntimeException("Can only place object if the board has been commited");
 	    }
+        this.committed = false;
 
-	    boolean rowFilled = false;
+	    //Row fill flag
+        boolean rowFilled = false;
 
-        if (x + piece.getWidth() > this.width || y + piece.getHeight() > this.height){
+	    //Checking if OOB
+        if (x + piece.getWidth() > this.width || y + piece.getHeight() > this.height
+                || x < 0 || y < 0){
 	        return PLACE_OUT_BOUNDS;
         }
 
+
         for (TPoint point : piece.getBody()){
-            boolean state = this.grid[x+point.x][y+point.y];
-            if (state){
+            //Current XY values
+            int cx = x + point.x, cy = y + point.y;
+
+            //Checking the current state of the board @ (cx, cy) coordinates
+            if (this.grid[cx][cy]){
+                //There is already something
                 return PLACE_BAD;
             } else {
-                this.grid[x+point.x][y+point.y] = true;
-                this.widths[point.y]++;
-                if (this.widths[point.y] == this.width) rowFilled = true;
-                this.heights[point.x] = point.y; //QUESTION (CF SUJET)
+                //Otherwise place the piece aka we flip the value
+                this.grid[cx][cy] = true;
+                //Updating the widths and heights attributes
+                this.widths[cy]++;
+                this.heights[cx] = cy + 1;
+
+                //has a row been filled ?
+                if (this.widths[cy] == this.width) rowFilled = true;
             }
         }
 
@@ -158,17 +195,42 @@ public class Board {
 	public int clearRows() {
 	    int cleared = 0;
 
+	    //Here, we browse through the grid (bottom to top) to see if there are rows to be cleared
+        //If there are, we store the index in a stack ...
+        Stack<Integer> rowsToClear = new Stack<>();
+
         for (int i = 0; i < this.height; i++) {
             if (this.widths[i] == this.width){
-                cleared++;
-                for (int j = 0; j < this.width; j++) {
-                    this.grid[i][j] = false;
-                }
-                dropFromRow(i);
+                rowsToClear.push(i);
             }
         }
+
+        //...so that we can pop the indexes in the right order so
+        //this code can work with multiple lines to clear
+        while (!rowsToClear.empty()){
+            int row = rowsToClear.pop();
+            clearOne(row);
+            dropFromRow(row);
+            cleared++;
+        }
+
         return cleared;
 	}
+
+    /**
+     * Utility method
+     * Clears one row at given index
+     * @param y clear row
+     */
+    public void clearOne(int y){
+
+        for (int i = 0; i < this.width; i++) {
+            this.grid[i][y] = false;
+            this.heights[i]--;
+        }
+
+        this.widths[y] = 0;
+    }
 
     /**
      * Utility method
@@ -176,11 +238,14 @@ public class Board {
      * @param y clear row
      */
 	private void dropFromRow(int y){
+
         for (int i = 0; i < this.width; i++) {
-            for (int j = y; j < this.height; j++) {
-                this.grid[i][j] = (j + 1 != this.height) && this.grid[i][j + 1];
-            }
+            //Rather than using Arrays' copyOf method, we use System's arraycopy
+            //Because we don't want to allocate new memory and this way, we can
+            //truncate the right portion of data
+            System.arraycopy(this.grid[i], y + 1, this.grid[i], y, this.height - 1 - y);
         }
+        System.arraycopy(this.widths, y + 1, this.widths, y, this.height - 1 - y);
     }
 
 	/**
@@ -190,15 +255,29 @@ public class Board {
 	 * overview docs.
 	 */
 	public void undo() {
-	    // YOUR CODE HERE
+
+	    //Using the same methods as the copy constructor, we revert to the backed uip state
+        //by cpopying the backup arrays
+        this.grid = Arrays.stream(this.backupGrid).map(boolean[]::clone).toArray(boolean[][]::new);
+        this.heights = Arrays.copyOf(this.backupHeights, this.width);
+        this.widths = Arrays.copyOf(this.backupWidths, this.height);
+
+        this.committed = true;
     }
 
 	/**
 	 * Puts the board in the committed state.
 	 */
 	public void commit() {
-	    // YOUR CODE HERE
-	    this.committed = true;
+
+	    //We create a copy instance of the board and assign the right variables
+        Board backup = new Board(this);
+
+        this.backupGrid = backup.grid;
+        this.backupHeights = backup.heights;
+        this.backupWidths = backup.widths;
+
+        this.committed = true;
 	}
 
 	/*
@@ -220,6 +299,7 @@ public class Board {
 		}
 		for (int x = 0; x < this.width + 2; x++)
 			buff.append('-');
+		buff.append('\n');
 		return buff.toString();
 	}
 
@@ -236,5 +316,4 @@ public class Board {
 			}
 		}
 	}
-
 }

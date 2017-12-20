@@ -59,8 +59,8 @@ public class Piece {
 		}
 		this.height++;
 		
-	    List<Integer> temp = new ArrayList<Integer>();
-	    this.skirt = new ArrayList<Integer>();
+	    List<Integer> temp = new ArrayList<>();
+	    this.skirt = new ArrayList<>();
 	    for (int i=0; i<this.body.size(); i++) {
 	    	if(!(temp.contains(this.body.get(i).x))) {
 	    		this.skirt.add(this.body.get(i).x, this.body.get(i).y);
@@ -95,8 +95,8 @@ public class Piece {
 		}
 		this.height++;
 		
-	    List<Integer> temp = new ArrayList<Integer>();
-	    this.skirt = new ArrayList<Integer>();
+	    List<Integer> temp = new ArrayList<>();
+	    this.skirt = new ArrayList<>();
 	    for (int i=0; i<this.body.size(); i++) {
 	    	if(!(temp.contains(this.body.get(i).x))) {
 	    		this.skirt.add(this.body.get(i).x, this.body.get(i).y);
@@ -242,15 +242,15 @@ public class Piece {
 	}
 
 	public String toString() {
-		String stringSkirt = "";
+		StringBuilder stringSkirt = new StringBuilder();
 		for(int i=0; i<this.skirt.size(); i++) {
-			 stringSkirt += Integer.toString(this.skirt.get(i)) + " ";
+			 stringSkirt.append(Integer.toString(this.skirt.get(i))).append(" ");
 		}
 		
-		String stringBody = "";
+		StringBuilder stringBody = new StringBuilder();
 		for(int i=0; i<this.body.size(); i++) {
-			 stringBody += Integer.toString(this.body.get(i).x) + " ";
-			 stringBody += Integer.toString(this.body.get(i).y) + " ";
+			 stringBody.append(Integer.toString(this.body.get(i).x)).append(" ");
+			 stringBody.append(Integer.toString(this.body.get(i).y)).append(" ");
 		}
 		
 		String image = "Shape {\n";
@@ -261,14 +261,14 @@ public class Piece {
 	    for(int i=0; i<this.height; i++) {
 	    	Arrays.fill(grille[i], ' ');
 	    }
-	    
+
 	    for(int i=0; i<this.body.size(); i++) {
-	    	grille[Math.abs(this.body.get(i).y - this.height + 1)][this.body.get(i).x] = 'X';
+	    	//grille[Math.abs(this.body.get(i).y - this.height + 1)][this.body.get(i).x] = 'X';
 	    }
 	    
-	    String s = "";
+	    StringBuilder s = new StringBuilder();
 	    for(int i=0; i<this.height; i++) {
-	    	s += new String(grille[i]) + "\n";
+	    	s.append(new String(grille[i])).append("\n");
 	    }
 	    
 	    image += s;

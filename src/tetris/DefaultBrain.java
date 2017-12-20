@@ -1,5 +1,7 @@
 // DefaultBrain.java
 
+package tetris;
+
 /**
  * Provided code. A simple Brain implementation. bestMove() iterates through all
  * the possible x values and rotations to play a particular piece (there are

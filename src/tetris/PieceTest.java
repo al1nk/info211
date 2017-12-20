@@ -56,8 +56,11 @@ public class PieceTest {
 		Piece pyr1 = new Piece(Piece.PYRAMID_STR);
 		Piece pyr2 = pyr1.computeNextRotation();
 		Piece pyr3 = pyr2.computeNextRotation();
-		
-		assertEquals(new ArrayList<>(Arrays.asList(1, 0, 1)), pyr3.getSkirt());
+
+		System.out.print(pyr2);
+        System.out.print(pyr2.getBody());
+
+        assertEquals(new ArrayList<>(Arrays.asList(1, 0, 1)), pyr3.getSkirt());
 		
 	}
 	
