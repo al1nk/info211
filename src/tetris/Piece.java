@@ -39,7 +39,6 @@ public class Piece {
 	// Attributes
 	private List<TPoint> body;
 	private List<Integer> skirt;
-	private boolean rotationFlag = true;
 	private int width;
 	private int height;
 	
@@ -65,12 +64,15 @@ public class Piece {
         this.width++;
 	    this.height++;
 
+	    //Constructing the skirt is the same as finding a minimum, so we init the array
+        //at the max value, and we assign if y is lower
 	    this.skirt = new ArrayList<>(Collections.nCopies(this.width, Integer.MAX_VALUE));
         for (TPoint point : points) {
             if (this.skirt.get(point.x) > point.y){
                 this.skirt.set(point.x, point.y);
             }
         }
+        System.out.print(this);
 	}
 	
 	/**
@@ -96,9 +98,11 @@ public class Piece {
 	private static List<TPoint> parsePoints(String rep) {
 
 	    List<TPoint> points = new ArrayList<>();
+	    //We find all the pairs of coordinates with a Regex
         Matcher m = Pattern.compile("([0-9]) ([0-9])").matcher(rep);
 
         while (m.find()){
+            //Doesn't throw anything because we checked the expression with a Regex
             TPoint point = new TPoint(Integer.parseInt(m.group(1)), Integer.parseInt(m.group(2)));
             points.add(point);
         }
@@ -147,10 +151,13 @@ public class Piece {
 	    List<TPoint> points = new ArrayList<>();
 
 	    for (TPoint point : this.body){
+	        //Here, to perform the CCW rotation, we need to perform a symmetry with respect to the y axis
+            // and transpose the matrix.
+            // This is done in one line when adding the new point
+
             //noinspection SuspiciousNameCombination
             points.add(new TPoint(this.height - 1 - point.y, point.x));
         }
-
 
         return new Piece(points);
 	}
@@ -162,7 +169,9 @@ public class Piece {
 	 * Used internally to detect if two rotations are effectively the same.
 	 */
 	public boolean equals(Object obj) {
-        return (obj instanceof Piece) && (this.body.containsAll( ((Piece) obj).body ) );
+	    //Object is the same if type matches and one contains all the elements of the other and vice versa
+        return (obj instanceof Piece)   && (this.body.containsAll( ((Piece) obj).body ))
+                                        && (((Piece) obj).body.containsAll( this.body ));
     }
 
 	public String toString() {
@@ -182,6 +191,8 @@ public class Piece {
         }
 
         StringBuilder figSb = new StringBuilder();
+        //Here, we need to explore the array in reverse order because of the nature of StringBuilder
+        //as it behaves like a list rather than a stack
         for (int i = fig.length - 1 ; i >= 0 ; i--) {
             figSb.append(new String(fig[i])).append('\n');
         }
