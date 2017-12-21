@@ -1,3 +1,5 @@
+package tetris;
+
 import static org.junit.Assert.*;
 
 import java.util.ArrayList;
@@ -43,10 +45,10 @@ public class PieceTest {
 	public void testSampleSkirt() {
 		Piece pyr1 = new Piece(Piece.PYRAMID_STR);
 
-		assertEquals(new ArrayList<Integer>(Arrays.asList(new Integer[] {0, 0, 0})), pyr1.getSkirt());
+		assertEquals(new ArrayList<>(Arrays.asList(0, 0, 0)), pyr1.getSkirt());
 
 		Piece s = new Piece(Piece.S1_STR);	
-		assertEquals(new ArrayList<Integer>(Arrays.asList(new Integer[] {0, 0, 1})), s.getSkirt());
+		assertEquals(new ArrayList<>(Arrays.asList(0, 0, 1)), s.getSkirt());
 	}
 	
 	@Test
@@ -54,8 +56,11 @@ public class PieceTest {
 		Piece pyr1 = new Piece(Piece.PYRAMID_STR);
 		Piece pyr2 = pyr1.computeNextRotation();
 		Piece pyr3 = pyr2.computeNextRotation();
-		
-		assertEquals(new ArrayList<Integer>(Arrays.asList(new Integer[] {1, 0, 1})), pyr3.getSkirt());
+
+		System.out.print(pyr2);
+        System.out.print(pyr2.getBody());
+
+        assertEquals(new ArrayList<>(Arrays.asList(1, 0, 1)), pyr3.getSkirt());
 		
 	}
 	

@@ -1,8 +1,11 @@
-import static org.junit.Assert.*;
+package tetris;
+
+import org.junit.Test;
+import tetris.*;
 
 import java.util.Arrays;
 
-import org.junit.Test;
+import static org.junit.Assert.*;
 
 public class BoardTest {
 
@@ -53,8 +56,8 @@ public class BoardTest {
 		Piece s = new Piece(Piece.S1_STR);
 		Piece sRotated = s.computeNextRotation();
 		
-		b.place(pyr1, 0, 0);
-		
+        b.place(pyr1, 0, 0);
+
 		b.commit();
 		int result = b.place(sRotated, 1, 1);
 		assertEquals(Board.PLACE_OK, result);
@@ -70,9 +73,10 @@ public class BoardTest {
 		
 		Piece p1 = new Piece(Piece.STICK_STR);
 		b.place(p1, 1, 1);
+
 		b.undo();
-		
-		for (int i = 0; i < b.getWidth(); i++) {
+
+        for (int i = 0; i < b.getWidth(); i++) {
 			assertEquals(0, b.getColumnHeight(i));
 		}
 
@@ -243,7 +247,7 @@ public class BoardTest {
 		b.grid[2][0] = true;
 		b.grid[3][0] = true;
 		b.grid[4][0] = true;
-		
+
 		b.updateWidthsHeights();
 		
 		b.clearRows();
