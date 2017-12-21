@@ -72,7 +72,6 @@ public class Piece {
                 this.skirt.set(point.x, point.y);
             }
         }
-        System.out.print(this);
 	}
 	
 	/**

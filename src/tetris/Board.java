@@ -185,6 +185,8 @@ public class Board {
             }
         }
 
+        updateWidthsHeights();
+
 	    return (rowFilled) ? PLACE_ROW_FILLED : PLACE_OK;
 	}
 
@@ -303,11 +305,11 @@ public class Board {
 		return buff.toString();
 	}
 
-	// Only for unit tetris.tests
 	protected void updateWidthsHeights() {
 		Arrays.fill(this.widths, 0);
+        Arrays.fill(this.heights, 0);
 
-		for (int i = 0; i < this.width; i++) {
+        for (int i = 0; i < this.width; i++) {
 			for (int j = 0; j < this.height; j++) {
 				if (this.grid[i][j]) {
 					this.widths[j] += 1;
