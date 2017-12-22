@@ -12,15 +12,15 @@ public interface Brain {
         public Piece piece;
         public double score;    // lower scores are better
     }
-    
+
     /**
-     Given a piece and a board, returns a move object that represents
-     the best play for that piece, or returns null if no play is possible.
-     The board should be in the committed state when this is called.
-     
-     limitHeight is the height of the lower part of the board that pieces
-     must be inside when they land for the game to keep going
-      -- typically 20 (i.e. board.getHeight() - 4)
-    */
+     * Given a piece and a board, returns a move object that represents
+     * the best play for that piece, or returns null if no play is possible.
+     * The board should be in the committed state when this is called.
+     * <p>
+     * limitHeight is the height of the lower part of the board that pieces
+     * must be inside when they land for the game to keep going
+     * -- typically 20 (i.e. board.getHeight() - 4)
+     */
     public Brain.Move bestMove(Board board, Piece piece, int limitHeight);
 }
